@@ -64,6 +64,10 @@ function stopServer() {
 
 }
 
+app.get('/status', (req, res) => {
+    res.send({status: serverState})
+})
+
 // Route to start the Minecraft server
 app.post('/start', async (req, res) => {
     if (mcProcess === null) {

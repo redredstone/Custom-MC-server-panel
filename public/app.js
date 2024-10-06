@@ -1,5 +1,6 @@
 const socket = io.connect('http://127.0.0.1');
 const consoleOutput = document.getElementById('console');
+const serverStatus = document.getElementById('serverStatus');
 
 function ansiToHtml(message) {
     // Define regex for matching ANSI color codes
@@ -44,6 +45,26 @@ function ansiToHtml(message) {
     return result;
 }
 
+function getServerStatus() {
+    fetch('/status', {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+        serverStatus.textContent = "Server status: " + data['status']
+        console.log('Data received:', data);
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
 // Listen for real-time console output
 socket.on('console_output', (data) => {
     let messageElement = document.createElement('div');
@@ -79,20 +100,9 @@ function restartServer() {
         .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
 }
 
-
 // Stop the Minecraft server
 function stopServer() {
     fetch('/stop', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
-}
-
-// Restart the Minecraft server
-function restartServer() {
-    fetch('/restart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-    })
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
 }
@@ -108,3 +118,7 @@ function sendCommand() {
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
 }
+
+setInterval(() => {
+   getServerStatus(); 
+}, 2000);
