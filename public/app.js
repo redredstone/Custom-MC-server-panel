@@ -90,6 +90,7 @@ function startServer() {
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`)
         .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
+    getServerStatus();
 }
 
 // Restart the Minecraft server
@@ -101,6 +102,7 @@ function restartServer() {
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`)
         .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
+    getServerStatus();
 }
 
 // Stop the Minecraft server
@@ -108,6 +110,7 @@ function stopServer() {
     fetch('/stop', { method: 'POST' })
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
+    getServerStatus();
 }
 
 // Send a command to the Minecraft server

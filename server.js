@@ -77,9 +77,9 @@ app.get('/status', (req, res) => {
 app.post('/start', async (req, res) => {
     if (mcProcess === null) {
        startServer();
-       res.json({ status: "Minecraft server starting..." });
+       res.json({ status: "Starting server..." });
     } else {
-        res.json({ status: "Minecraft server is already running" });
+        res.json({ status: "Server is already running" });
     }
 });
 
@@ -87,9 +87,9 @@ app.post('/start', async (req, res) => {
 app.post('/stop', async (req, res) => {
     if (mcProcess !== null) {
         stopServer();
-        res.json({ status: "Minecraft server stopping" });
+        res.json({ status: "Stopping server" });
     } else {
-        res.json({ status: "Minecraft server is not running" });
+        res.json({ status: "Server is not running" });
     }
 });
 
@@ -106,7 +106,7 @@ app.post('/restart', async (req, res) => {
         stopServer();
 
         mcProcess.on('exit', async () => {
-            console.log('Minecraft server stopped. Restarting...');
+            console.log('Server stopped. Restarting...');
             startServer();
 
             mcProcess.stderr.on('data', async (data) => {
