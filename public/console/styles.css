@@ -1,10 +1,18 @@
 #console {
     height: 500px;
     overflow-y: scroll;
-    background-color: #333;
+    background-color: #1d1d1d;
     color: white;
     padding: 10px;
     font-family: monospace;
+    text-align: left;
+}
+
+body {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 50px;
 }
 
 button {
@@ -12,16 +20,20 @@ button {
 }
 
 .serverButton {
-  float: left;
-  color: #ffffff;
-  text-align: center;
-  padding: 12px 14px;
-  text-decoration: none;
-  font-size: 17px;
+  background-color:transparent;
+	border-radius:25px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:20px;
+	padding:16px 31px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
 }
 
 .commandField {
-  width: 100%;
+  width: 80%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
@@ -31,13 +43,19 @@ button {
 }
 
 .commandSend {
-  float: left;
-  color: #ffffff;
-  text-align: center;
-  padding: 12px 14px;
-  text-decoration: none;
-  font-size: 17px;
-  background-color: blue;
+  background-color:transparent;
+  position:relative;
+  top: 1px;
+	border-radius:25px;
+  border: 3px solid rgb(0, 83, 207);
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	padding:16px 31px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
 }
 
 .commandExecute {

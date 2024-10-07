@@ -71,8 +71,13 @@ function issueCommand(command) {
     mcProcess.stdin.write(command + "\n");
 }
 
+function updateServerState(newState) {
+    serverState = newState
+    io.emit('server_status', newState)
+}
+
 function startServer() {
-    serverState = 'Starting';
+    updateServerState("Starting");
 
     console.log(`Starting server....`);
 
@@ -85,7 +90,7 @@ function startServer() {
 
         // Check if the server has started successfully (based on "Done" message)
         if (output.includes('Done')) {
-            serverState = 'Running';
+            updateServerState("Running");
         }
     });
 
@@ -98,13 +103,13 @@ function startServer() {
     mcProcess.on('exit', async () => {
         console.log('Minecraft server has stopped.');
         mcProcess = null;
-        serverState = 'Offline';
+        updateServerState("Offline");
     });
 
 }
 
 function stopServer() {
-    serverState = 'Stopping';
+    updateServerState("Stopping");
 
     console.log('Stopping Minecraft server...');
     issueCommand("stop\n");
@@ -112,7 +117,7 @@ function stopServer() {
 
     mcProcess.on('exit', async () => {
         mcProcess = null;
-        serverState = 'Offline';
+        updateServerState("Offline");
     });
 }
 
@@ -147,7 +152,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/status', restrict, (req, res) => {
-    res.send({ status: serverState });
+    res.send({state: serverState});
 })
 
 app.get('/console', restrict, (req, res) => {
@@ -189,7 +194,7 @@ app.post('/restart', async (req, res) => {
     }
 
     if (mcProcess !== null) {
-        serverState = 'Restarting';
+        updateServerState("Restarting");
 
         console.log('Restarting server...');
         stopServer();

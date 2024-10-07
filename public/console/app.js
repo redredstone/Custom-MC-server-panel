@@ -3,24 +3,10 @@ const consoleOutput = document.getElementById('console');
 const serverStatus = document.getElementById('serverStatus');
 
 function ansiToHtml(message) {
-    // Define regex for matching ANSI color codes
-    const ansiRegex = /\x1b\[([0-9;]*)m/g;
-
-    const colorMap = {
-        // Basic ANSI colors mapped to their HTML color equivalents
-        30: 'black',
-        31: 'red',
-        32: 'green',
-        33: 'yellow',
-        34: 'blue',
-        35: 'magenta',
-        36: 'cyan',
-        37: 'white',
-        90: 'gray' // Bright black (gray)
-    };
+    const ansiRegex = /\x1b\[(\d{1,3}(;\d{1,3})*)?m/g;
 
     let result = '';
-    let currentStyle = 'color:white;';
+    let currentStyle = '';
     let lastIndex = 0;
     let match;
 
@@ -28,50 +14,72 @@ function ansiToHtml(message) {
         const ansiCodes = match[1].split(';');
         const index = match.index;
 
-        // Append previous text without color
         result += `<span style="${currentStyle}">${message.slice(lastIndex, index)}</span>`;
 
-        // Check for color codes and update style
-        ansiCodes.forEach(code => {
-            currentStyle = 'color:white;';
-        });
+        currentStyle = '';
+
+        for (let i = 0; i < ansiCodes.length; i++) {
+            const code = parseInt(ansiCodes[i]);
+
+            switch (code) {
+                case 0:
+                    currentStyle = '';
+                    break;
+                case 1:
+                    currentStyle += 'font-weight:bold;';
+                    break;
+                case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37:
+                    currentStyle += `color:${ansiColor(code - 30)};`;
+                    break;
+                case 90: case 91: case 92: case 93: case 94: case 95: case 96: case 97:
+                    currentStyle += `color:${ansiColor(code - 90, true)};`;
+                    break;
+                case 38:
+                    if (ansiCodes[i + 1] === '2') {
+                        const r = ansiCodes[i + 2];
+                        const g = ansiCodes[i + 3];
+                        const b = ansiCodes[i + 4];
+                        currentStyle += `color:rgb(${r},${g},${b});`;
+                        i += 4;
+                    }
+                    break;
+            }
+        }
 
         lastIndex = ansiRegex.lastIndex;
     }
 
-    // Append any remaining text after the last match
     result += `<span style="${currentStyle}">${message.slice(lastIndex)}</span>`;
+
+    result = result.replace(/\n/g, '<br>');
 
     return result;
 }
 
-function getServerStatus() {
-    fetch('/status', {
-        method: "GET",
-        headers: { 'Content-Type': 'application/json' },
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-        serverStatus.textContent = "Server status: " + data['status']
-        console.log('Data received:', data);
-    })
-    .catch(error => {
-      serverStatus.textContent = "Server status: Unknown"
-      console.error('There was a problem with the fetch operation:', error);
-    });
+function ansiColor(code, bright = false) {
+    const colors = [
+        'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'
+    ];
+    return bright ? `light${colors[code]}` : colors[code];
 }
 
-// Listen for real-time console output
+function escapeHtml(message) {
+    return message
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Listen for console output
 socket.on('console_output', (data) => {
     let messageElement = document.createElement('div');
     
+    let safeMessage = escapeHtml(data.message);
+
     // Parse the ANSI codes and convert them to HTML
-    messageElement.innerHTML = ansiToHtml(data.message);
+    messageElement.innerHTML = ansiToHtml(safeMessage);
 
     console.log(data.message)
 
@@ -81,7 +89,27 @@ socket.on('console_output', (data) => {
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
 });
 
-// Start the Minecraft server
+// Listen for server status
+socket.on('server_status', (data) => {
+    serverStatus.textContent = "Server status: " + data
+    console.log('Data received:', data);
+})
+
+// Get server status on page refresh
+function getServerStatus() {
+    fetch('/status', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => response.json())
+    .then(data => {
+        serverStatus.textContent = "Server status: " + data['state']
+        console.log('Data received:', data);
+    })
+    .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
+}
+
+// Start the server
 function startServer() {
     fetch('/start', {
         method: 'POST',
@@ -90,10 +118,9 @@ function startServer() {
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`)
         .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
-    getServerStatus();
 }
 
-// Restart the Minecraft server
+// Restart the server
 function restartServer() {
     fetch('/restart', {
         method: 'POST',
@@ -102,18 +129,16 @@ function restartServer() {
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`)
         .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
-    getServerStatus();
 }
 
-// Stop the Minecraft server
+// Stop the server
 function stopServer() {
     fetch('/stop', { method: 'POST' })
         .then(response => response.json())
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
-    getServerStatus();
 }
 
-// Send a command to the Minecraft server
+// Send a command to the server
 function sendCommand() {
     const command = document.getElementById('command').value;
     fetch('/command', {
@@ -125,6 +150,4 @@ function sendCommand() {
         .then(data => consoleOutput.innerHTML += `<div>${data.status}</div>`);
 }
 
-setInterval(() => {
-   getServerStatus(); 
-}, 2000);
+getServerStatus()
