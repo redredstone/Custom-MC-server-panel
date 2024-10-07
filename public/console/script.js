@@ -75,7 +75,7 @@ function escapeHtml(message) {
 // Listen for console output
 socket.on('console_output', (data) => {
     let messageElement = document.createElement('div');
-    
+
     let safeMessage = escapeHtml(data.message);
 
     // Parse the ANSI codes and convert them to HTML
@@ -101,12 +101,12 @@ function getServerStatus() {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => response.json())
-    .then(data => {
-        serverStatus.textContent = "Server status: " + data['state']
-        console.log('Data received:', data);
-    })
-    .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
+        .then(response => response.json())
+        .then(data => {
+            serverStatus.textContent = "Server status: " + data['state']
+            console.log('Data received:', data);
+        })
+        .catch(error => consoleOutput.innerHTML += `<div style="color:red;">Error: ${error}</div>`);
 }
 
 // Start the server

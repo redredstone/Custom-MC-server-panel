@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Server Control</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="topnav">
-        <a class="active" href="/">Console</a>
+        <a class="active" href="/console">Console</a>
+        <a href="/players">Players</a>
         <a href="/logout">Log out</a>
     </div>
 
@@ -21,14 +24,15 @@
     <div class="serverControlButtons">
         <button class="serverButton" style="border: 3px solid green;" onclick="startServer()">Start Server</button>
         <button class="serverButton" style="border: 3px solid red;" onclick="stopServer()">Stop Server</button>
-        <button class="serverButton" style="border: 3px solid yellow;"onclick="restartServer()">Restart Server</button>
+        <button class="serverButton" style="border: 3px solid yellow;" onclick="restartServer()">Restart Server</button>
     </div>
 
     <div>
-      <h2 id="serverStatus">Server Status: Unknown</h2>
+        <h2 id="serverStatus">Server Status: Unknown</h2>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

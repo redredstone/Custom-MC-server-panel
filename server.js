@@ -30,20 +30,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 const users = [
-  { name: 'admin' , salt: '' , hash: ''},
-  { name: 'guest' , salt: '' , hash: ''}
+  { name: 'admin' , salt: '' , hash: ''}
 ];
 
+// Change in future lol
 hash({ password: 'admin' }, function (err, pass, salt, hash) {
   if (err) throw err;
   users[0].salt = salt;
   users[0].hash = hash;
-});
-
-hash({ password: '' }, function (err, pass, salt, hash) {
-  if (err) throw err;
-  users[1].salt = salt;
-  users[1].hash = hash;
 });
 
 function authenticate(name, pass, ip, fn) {
@@ -68,7 +62,9 @@ function restrict(req, res, next) {
 }
 
 function issueCommand(command) {
-    mcProcess.stdin.write(command + "\n");
+    if (mcProcess !== null) {
+        mcProcess.stdin.write(command + "\n");
+    }
 }
 
 function updateServerState(newState) {
@@ -168,7 +164,7 @@ app.get('/403', (req, res) => {
 })
 
 // Route to start the Minecraft server
-app.post('/start', async (req, res) => {
+app.post('/start', restrict, async (req, res) => {
     if (mcProcess === null) {
         startServer();
         res.json({ status: "Starting server..." });
@@ -178,7 +174,7 @@ app.post('/start', async (req, res) => {
 });
 
 // Route to stop the Minecraft server
-app.post('/stop', async (req, res) => {
+app.post('/stop', restrict, async (req, res) => {
     if (mcProcess !== null) {
         stopServer();
         res.json({ status: "Stopping server" });
@@ -188,7 +184,7 @@ app.post('/stop', async (req, res) => {
 });
 
 // Route to restart the Minecraft server
-app.post('/restart', async (req, res) => {
+app.post('/restart', restrict, async (req, res) => {
     if (!serverDir) {
         return res.status(400).json({ status: "Minecraft server directory is not defined." });
     }
@@ -214,7 +210,7 @@ app.post('/restart', async (req, res) => {
 });
 
 // Route to send a command to the Minecraft server console
-app.post('/command', (req, res) => {
+app.post('/command', restrict, (req, res) => {
     const command = req.body.command;
     if (mcProcess !== null) {
         issueCommand(command);
