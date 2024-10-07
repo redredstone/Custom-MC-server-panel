@@ -16,6 +16,8 @@ let mcProcess = null; // Will hold the Minecraft server process
 let serverState = 'Offline'; // Initial state
 const serverDir = __dirname + "/server"; // Directory the server is in
 
+onlinePlayers = []
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -70,6 +72,36 @@ function issueCommand(command) {
 function updateServerState(newState) {
     serverState = newState
     io.emit('server_status', newState)
+}
+
+function getOnlinePlayers() {
+
+    mcProcess.stdout.once('data', (data) => {
+        const output = data.toString();
+        
+        // Minecraft 'list' command response looks like:
+        // "There are 2 of a max 20 players online: user1, user2"
+        if (output.includes('players online')) {
+            console.log(output)
+            const playersText = output.split(": ")[2]; // Get the part after "players online:"
+            console.log(playersText)
+            
+            // If there are players, split the list by comma, otherwise, return empty array
+            if (playersText) {
+                onlinePlayers = [];
+                allPlayers = playersText.split(', ').filter(player => player.trim().length > 0);
+                for (let index = 0; index < allPlayers.length; index++) {
+                    const element = allPlayers[index];
+                    var newElement = element.replace("\r\n", "")
+                    newElement.replace("\u001b", "")
+                    onlinePlayers.push(newElement);
+                }
+            } else {
+                onlinePlayers = [];
+            }
+        }
+    });
+    issueCommand("list");
 }
 
 function startServer() {
@@ -149,6 +181,15 @@ app.get('/logout', (req, res) => {
 
 app.get('/status', restrict, (req, res) => {
     res.send({state: serverState});
+})
+
+app.get('/online_players', restrict, (req, res) => {
+    getOnlinePlayers();
+    res.send({players: onlinePlayers})
+})
+
+app.get('/players', restrict, (req, res) => {
+    res.sendFile(__dirname + "/public/players/players.html")
 })
 
 app.get('/console', restrict, (req, res) => {
