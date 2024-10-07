@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Login</title>
+
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+            font: 13px Helvetica, Arial, sans-serif;
+        }
+
+        .topnav {
+            background-color: #111111;
+            overflow: hidden;
+        }
+
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+  
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+  
+        .topnav a.active {
+            background-color: #6d6d6d;
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+        .error {
+            color: red
+        }
+        .success {
+            color: green;
+        }   
+        </style>
+    </head>
+    <body>
+
+        <h1>Login</h1>
+        <form id="loginForm">
+            <p>
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username">
+            </p>
+            <p>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password">
+            </p>
+            <p>
+                <input id="submit" type="submit" value="Login">
+            </p>
+        </form>
+        <script src="script.js"></script>
+    </body>
+</html>
