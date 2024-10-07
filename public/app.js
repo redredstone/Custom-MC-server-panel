@@ -61,6 +61,7 @@ function getServerStatus() {
         console.log('Data received:', data);
     })
     .catch(error => {
+      serverStatus.textContent = "Server status: Unknown"
       console.error('There was a problem with the fetch operation:', error);
     });
 }
@@ -71,6 +72,8 @@ socket.on('console_output', (data) => {
     
     // Parse the ANSI codes and convert them to HTML
     messageElement.innerHTML = ansiToHtml(data.message);
+
+    console.log(data.message)
 
     consoleOutput.appendChild(messageElement);
 

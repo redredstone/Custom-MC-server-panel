@@ -19,10 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 const serverDir = __dirname + "/server"; // Directory the server is in
 
+function issueCommand(command) {
+    mcProcess.stdin.write(command + "\n");
+}
+
 function startServer() {
     serverState = 'Starting';
 
-    console.log(`Starting Minecraft server from directory: ${serverDir}`);
+    console.log(`Starting server....`);
 
     mcProcess = spawn('java', ['-Xmx1024M', '-Xms1024M', '-jar', 'server.jar', 'nogui'], { cwd: serverDir });
 
@@ -55,7 +59,8 @@ function stopServer() {
     serverState = 'Stopping';
 
     console.log('Stopping Minecraft server...');
-    mcProcess.stdin.write("stop\n");
+    issueCommand("stop\n");
+    //mcProcess.stdin.write("stop\n");
 
     mcProcess.on('exit', async () => {
         mcProcess = null;
@@ -97,7 +102,7 @@ app.post('/restart', async (req, res) => {
     if (mcProcess !== null) {
         serverState = 'Restarting';
 
-        console.log('Restarting Minecraft server...');
+        console.log('Restarting server...');
         stopServer();
 
         mcProcess.on('exit', async () => {
@@ -110,15 +115,7 @@ app.post('/restart', async (req, res) => {
             });
         });
 
-        res.json({ status: "Minecraft server restarting..." });
-    } else {
-        console.log('Server is not running, starting Minecraft server...');
-        startServer();
-
-        mcProcess.stderr.on('data', async (data) => {
-            const error = data.toString();
-            io.emit('console_output', { message: error, type: 'error' });
-        });
+        res.json({ status: "Restarting server..." });
     }
 });
 
@@ -126,7 +123,7 @@ app.post('/restart', async (req, res) => {
 app.post('/command', (req, res) => {
     const command = req.body.command;
     if (mcProcess !== null) {
-        mcProcess.stdin.write(command + "\n");
+        issueCommand(command);
         res.json({ status: `Server issued command: /${command}` });
     } else {
         res.json({ status: "Server is not running" });
