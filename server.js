@@ -81,11 +81,9 @@ function getOnlinePlayers() {
         const ansiRegex = /\u001b\[[0-9;]*m/g;
 
         if (output.includes('players online')) {
-            console.log(output);
             const cleanedOutput = output.replace(ansiRegex, '');
 
             const playersText = cleanedOutput.split(": ")[2];
-            console.log(playersText);
 
             if (playersText) {
                 onlinePlayers = [];
