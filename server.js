@@ -75,29 +75,29 @@ function updateServerState(newState) {
 }
 
 function getOnlinePlayers() {
-
     mcProcess.stdout.once('data', (data) => {
         const output = data.toString();
-        
-        // Minecraft 'list' command response looks like:
-        // "There are 2 of a max 20 players online: user1, user2"
+
+        const ansiRegex = /\u001b\[[0-9;]*m/g;
+
         if (output.includes('players online')) {
-            console.log(output)
-            const playersText = output.split(": ")[2]; // Get the part after "players online:"
-            console.log(playersText)
-            
-            // If there are players, split the list by comma, otherwise, return empty array
+            console.log(output);
+            const cleanedOutput = output.replace(ansiRegex, '');
+
+            const playersText = cleanedOutput.split(": ")[2];
+            console.log(playersText);
+
             if (playersText) {
                 onlinePlayers = [];
-                allPlayers = playersText.split(', ').filter(player => player.trim().length > 0);
+                const allPlayers = playersText.split(', ').filter(player => player.trim().length > 0);
                 for (let index = 0; index < allPlayers.length; index++) {
-                    const element = allPlayers[index];
-                    var newElement = element.replace("\r\n", "")
-                    newElement.replace("\u001b", "")
+                    let newElement = allPlayers[index].replace("\r\n", "").trim();
                     onlinePlayers.push(newElement);
                 }
+
+                return { players: onlinePlayers };
             } else {
-                onlinePlayers = [];
+                return { players: [] };
             }
         }
     });
@@ -249,6 +249,31 @@ app.post('/restart', restrict, async (req, res) => {
         res.json({ status: "Restarting server..." });
     }
 });
+
+app.post('/op_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`op ${player}`); // or `deop ${player}` based on the player's current status
+    res.json({ status: 'opped' }); // respond with the updated status
+});
+
+app.post('/deop_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`deop ${player}`); // or `deop ${player}` based on the player's current status
+    res.json({ status: 'deopped' }); // respond with the updated status
+});
+
+app.post('/ban_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`ban ${player}`);
+    res.json({ status: 'banned' });
+});
+
+app.post('/kick_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`kick ${player}`);
+    res.json({ status: 'kicked' });
+});
+
 
 // Route to send a command to the Minecraft server console
 app.post('/command', restrict, (req, res) => {
