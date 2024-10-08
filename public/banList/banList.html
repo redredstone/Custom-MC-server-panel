@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-16">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/banList/style.css">
+    <title>Minecraft Server Control</title>
+</head>
+
+<body>
+    <div class="topnav">
+        <a href="/console">Console</a>
+        <a href="/players">Players</a>
+        <a class="active" href="/bans">Ban list</a>
+        <a href="/logout">Log out</a>
+    </div>
+
+    <br>
+    <h1>User bans: </h1>
+    <div id="bannedPlayersList" class="ban-list"></div>
+    <br>
+    <h1>Ip bans: </h1>
+    <div id="bannedIPsList" class="ban-list"></div>
+
+    <script src="/banList/script.js"></script>
+</body>
+
+</html>

@@ -1,11 +1,12 @@
 const express = require('express');
-var session = require('express-session');
-var hash = require('pbkdf2-password')()
+const session = require('express-session');
+const hash = require('pbkdf2-password')()
 const bodyParser = require('body-parser');
 const http = require('http');
 const socketIo = require('socket.io');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 
 const app = express();
@@ -75,31 +76,33 @@ function updateServerState(newState) {
 }
 
 function getOnlinePlayers() {
-    mcProcess.stdout.once('data', (data) => {
-        const output = data.toString();
-
-        const ansiRegex = /\u001b\[[0-9;]*m/g;
-
-        if (output.includes('players online')) {
-            const cleanedOutput = output.replace(ansiRegex, '');
-
-            const playersText = cleanedOutput.split(": ")[2];
-
-            if (playersText) {
-                onlinePlayers = [];
-                const allPlayers = playersText.split(', ').filter(player => player.trim().length > 0);
-                for (let index = 0; index < allPlayers.length; index++) {
-                    let newElement = allPlayers[index].replace("\r\n", "").trim();
-                    onlinePlayers.push(newElement);
+    if (mcProcess !== null && serverState === "Running") {
+        mcProcess.stdout.once('data', (data) => {
+            const output = data.toString();
+    
+            const ansiRegex = /\u001b\[[0-9;]*m/g;
+    
+            if (output.includes('players online')) {
+                const cleanedOutput = output.replace(ansiRegex, '');
+    
+                const playersText = cleanedOutput.split(": ")[2];
+    
+                if (playersText) {
+                    onlinePlayers = [];
+                    const allPlayers = playersText.split(', ').filter(player => player.trim().length > 0);
+                    for (let index = 0; index < allPlayers.length; index++) {
+                        let newElement = allPlayers[index].replace("\r\n", "").trim();
+                        onlinePlayers.push(newElement);
+                    }
+    
+                    return { players: onlinePlayers };
+                } else {
+                    return { players: [] };
                 }
-
-                return { players: onlinePlayers };
-            } else {
-                return { players: [] };
             }
-        }
-    });
-    issueCommand("list");
+        });
+        issueCommand("list");
+    }
 }
 
 function startServer() {
@@ -177,21 +180,16 @@ app.get('/logout', (req, res) => {
   });
 });
 
-app.get('/status', restrict, (req, res) => {
-    res.send({state: serverState});
-})
-
-app.get('/online_players', restrict, (req, res) => {
-    getOnlinePlayers();
-    res.send({players: onlinePlayers})
-})
-
 app.get('/players', restrict, (req, res) => {
     res.sendFile(__dirname + "/public/players/players.html")
 })
 
 app.get('/console', restrict, (req, res) => {
     res.sendFile(__dirname + "/public/console/console.html");
+})
+
+app.get('/bans', restrict, (req, res) => {
+    res.sendFile(__dirname + "/public/banList/banList.html")
 })
 
 app.get('/404', (req, res) => {
@@ -202,7 +200,63 @@ app.get('/403', (req, res) => {
     res.sendFile(__dirname + "/public/commonPages/403Page.html")
 })
 
-// Route to start the Minecraft server
+
+app.get('/status', restrict, (req, res) => {
+    res.send({state: serverState});
+})
+
+app.get('/online_players', restrict, (req, res) => {
+    getOnlinePlayers();
+    res.send({players: onlinePlayers})
+})
+
+app.get('/banned_players', restrict, (req, res) => {
+    playersFound = []
+
+    fs.readFile(serverDir + "/banned-players.json", 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading banned-players.json:', err);
+            return;
+        }
+        
+        try {
+            const bannedPlayers = JSON.parse(data);
+            
+            bannedPlayers.forEach(player => {
+                playersFound.push({user:player.name, banReason: player.reason})
+            });
+            
+            res.send({players: playersFound})
+        } catch (parseErr) {
+            console.error('Error parsing JSON:', parseErr);
+        }
+    });
+})
+
+app.get('/banned_ips', restrict, (req, res) => {
+    ipsFound = []
+
+    fs.readFile(serverDir + "/banned-ips.json", 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading banned-ips.json:', err);
+            return;
+        }
+        
+        try {
+            const bannedIPs = JSON.parse(data);
+            
+            bannedIPs.forEach(ip => {
+                ipsFound.push({ip_address:ip.ip, banReason: ip.reason})
+            });
+            
+            res.send({ips: ipsFound})
+        } catch (parseErr) {
+            console.error('Error parsing JSON:', parseErr);
+        }
+    });
+})
+
+
 app.post('/start', restrict, async (req, res) => {
     if (mcProcess === null) {
         startServer();
@@ -212,7 +266,6 @@ app.post('/start', restrict, async (req, res) => {
     }
 });
 
-// Route to stop the Minecraft server
 app.post('/stop', restrict, async (req, res) => {
     if (mcProcess !== null) {
         stopServer();
@@ -222,7 +275,6 @@ app.post('/stop', restrict, async (req, res) => {
     }
 });
 
-// Route to restart the Minecraft server
 app.post('/restart', restrict, async (req, res) => {
     if (!serverDir) {
         return res.status(400).json({ status: "Minecraft server directory is not defined." });
@@ -260,18 +312,32 @@ app.post('/deop_player/:player', restrict, (req, res) => {
     res.json({ status: 'deopped' }); // respond with the updated status
 });
 
-app.post('/ban_player/:player', restrict, (req, res) => {
-    const player = req.params.player;
-    issueCommand(`ban ${player}`);
-    res.json({ status: 'banned' });
-});
-
 app.post('/kick_player/:player', restrict, (req, res) => {
     const player = req.params.player;
     issueCommand(`kick ${player}`);
     res.json({ status: 'kicked' });
 });
 
+app.post('/ban_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`ban ${player}`);
+    res.json({ status: 'banned' });
+});
+
+app.post('/unban_player/:player', restrict, (req, res) => {
+    const player = req.params.player;
+    issueCommand(`pardon ${player}`);
+    res.json({ status: 'unbanned' });
+})
+
+app.post('/unban_ip', restrict, (req, res) => {
+    const ip = req.body.ip_address;
+    console.log(req.body)
+    console.log(req)
+    console.log(ip)
+    issueCommand(`pardon-ip ${ip}`);
+    res.json({ status: 'unbanned' });
+})
 
 // Route to send a command to the Minecraft server console
 app.post('/command', restrict, (req, res) => {
