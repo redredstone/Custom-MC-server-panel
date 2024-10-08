@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-16">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Minecraft Server Control</title>
+</head>
+
+<body>
+    <div class="topnav">
+        <a href="/console">Console</a>
+        <a href="/players">Players</a>
+        <a href="/bans">Bans</a>
+        <a class="active" href="/properties">Server Properties</a>
+        <a href="/logout">Log out</a>
+    </div>
+
+    <br>
+
+    <div class="settings">
+        <div class="setting">
+            <h2>Allow flying</h2>
+            <label class="switch" >
+                <input type="checkbox" id="allow-flight" onclick=checkboxChanged(this)>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="setting">
+            <h2>Nether</h2>
+            <label class="switch" >
+                <input type="checkbox" id="allow-nether" onclick=checkboxChanged(this)>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="setting">
+            <h2>test</h2>
+            <button>test</button>
+        </div>
+        <div class="setting">
+            <h2>test</h2>
+            <button>test</button>
+        </div>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

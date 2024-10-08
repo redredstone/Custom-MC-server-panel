@@ -192,6 +192,10 @@ app.get('/bans', restrict, (req, res) => {
     res.sendFile(__dirname + "/public/banList/banList.html")
 })
 
+app.get('/properties', (req, res) => {
+    res.sendFile(__dirname + "/public/properties/serverProperties.html")
+})
+
 app.get('/404', (req, res) => {
     res.sendFile(__dirname + "/public/commonPages/404Page.html");
 })
@@ -256,6 +260,46 @@ app.get('/banned_ips', restrict, (req, res) => {
     });
 })
 
+app.get('/server_properties', (req, res) => {
+    fs.readFile(serverDir + "/server.properties", 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Error reading file');
+        } else {
+            res.send(data);
+        }
+    });
+});
+
+app.post('/server_properties', (req, res) => {
+    const newContent = req.body.content;
+    const [key, newValue] = newContent.split('=');
+
+    fs.readFile(serverDir + "/server.properties", 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Error reading file');
+        } else {
+            // Split the content into lines
+            const lines = data.split('\n');
+            
+            const updatedLines = lines.map(line => {
+                if (line.startsWith(key + '=')) {
+                    return `${key}=${newValue}`;
+                }
+                return line;
+            });
+
+            const updatedContent = updatedLines.join('\n');
+
+            fs.writeFile(serverDir + "/server.properties", updatedContent, 'utf8', (err) => {
+                if (err) {
+                    res.status(500).send('Error saving file');
+                } else {
+                    res.status(200).send('File saved successfully');
+                }
+            });
+        }
+    });
+});
 
 app.post('/start', restrict, async (req, res) => {
     if (mcProcess === null) {
