@@ -192,7 +192,7 @@ app.get('/bans', restrict, (req, res) => {
     res.sendFile(__dirname + "/public/banList/banList.html")
 })
 
-app.get('/properties', (req, res) => {
+app.get('/properties', restrict, (req, res) => {
     res.sendFile(__dirname + "/public/properties/serverProperties.html")
 })
 
@@ -260,17 +260,25 @@ app.get('/banned_ips', restrict, (req, res) => {
     });
 })
 
-app.get('/server_properties', (req, res) => {
+app.get('/server_properties', restrict, (req, res) => {
     fs.readFile(serverDir + "/server.properties", 'utf8', (err, data) => {
         if (err) {
             res.status(500).send('Error reading file');
         } else {
-            res.send(data);
+            const newData = data.split("\n")
+            var dataToSend = {}
+            newData.forEach(line => {
+                const newLine = line.split("=")
+                if (newLine.length > 1 && newLine[1] !== undefined) {
+                    dataToSend[newLine[0]] = newLine[1].replace('\r', "")
+                }
+            })
+            res.send({properties: dataToSend});
         }
     });
 });
 
-app.post('/server_properties', (req, res) => {
+app.post('/server_properties', restrict, (req, res) => {
     const newContent = req.body.content;
     const [key, newValue] = newContent.split('=');
 

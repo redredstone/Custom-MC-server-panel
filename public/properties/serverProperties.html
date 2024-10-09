@@ -19,30 +19,643 @@
 
     <br>
 
+    <h1>General settings</h1>
     <div class="settings">
         <div class="setting">
             <h2>Allow flying</h2>
-            <label class="switch" >
-                <input type="checkbox" id="allow-flight" onclick=checkboxChanged(this)>
-                <span class="slider round"></span>
+            <label>
+                <select name="allow-flight" class="select" id="allow-flight" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
             </label>
+            <small>Allow players to fly</small>
+        </div>
+        <div class="setting">
+            <h2>Difficulty</h2>
+            <label>
+                <select name="difficulty" class="select" id="difficulty" onchange=selectionChanged(this)>
+                    <option value="peaceful">Peaceful</option>
+                    <option value="easy">Easy</option>
+                    <option value="normal">Normal</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <small>The difficulty</small>
+            </label>
+        </div>
+        <div class="setting">
+            <h2>Allow command blocks</h2>
+            <label>
+                <select name="allow-flight" class="select" id="enable-command-block" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Allow command blocks to run</small>
+        </div>
+        <div class="setting">
+            <h2>Force game mode</h2>
+            <label>
+                <select name="force-gamemode" class="select" id="force-gamemode" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Players are put into a specific game mode when they log on</small>
+        </div>
+        <div class="setting">
+            <h2>Gamemode</h2>
+            <label>
+                <select name="gamemode" class="select" id="gamemode" onchange=selectionChanged(this)>
+                    <option value="survival">Survival</option>
+                    <option value="creative">Creative</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="spectator">Spectator</option>
+                </select>
+            </label>
+            <small>Default game mode on the server</small>
+        </div>
+        <div class="setting">
+            <h2>Hardcode</h2>
+            <label>
+                <select name="hardcore" class="select" id="hardcore" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Players are put into a specific game mode when they log on</small>
+        </div>
+        <div class="setting">
+            <h2>PVP</h2>
+            <label>
+                <select name="pvp" class="select" id="pvp" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Toggle combat (PvP), players can kill each other if enabled</small>
+        </div>
+        <div class="setting">
+            <h2>View distance</h2>
+            <label>
+                <select name="view-distance" class="select" id="view-distance" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Serverside viewing distance</small>
+        </div>
+        <div class="setting">
+            <h2>Player idle timeout</h2>
+            <label>
+                <input class="input" type="number" name="player-idle-timeout" id="player-idle-timeout" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>Time before a player is kicked for being idle</small>
+        </div>
+        <div class="setting">
+            <h2>Enforce whitelist</h2>
+            <label>
+                <select name="enforce-whitelist" class="select" id="enforce-whitelist" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enforces the whitelist</small>
+        </div>
+        <div class="setting">
+            <h2>Whitelist</h2>
+            <label>
+                <select name="white-list" class="select" id="white-list" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enables or disables the whitelist on the server</small>
+        </div>
+        
+    </div>
+    <hr class="settingSeparator">
+
+    <h1>World settings</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>Spawn animals</h2>
+            <label>
+                <select name="spawn-animals" class="select" id="spawn-animals" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enable or disable animals (sheep, cows, ect.) spawning</small>
+        </div>
+        <div class="setting">
+            <h2>Spawn villagers</h2>
+            <label>
+                <select name="spawn-npcs" class="select" id="spawn-npcs" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enable or disable villagers spawning</small>
+        </div>
+        <div class="setting">
+            <h2>Spawn monsters</h2>
+            <label>
+                <select name="spawn-monsters" class="select" id="spawn-monsters" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enable or disable monsters (zombies, skeletons, ect.) spawning</small>
         </div>
         <div class="setting">
             <h2>Nether</h2>
-            <label class="switch" >
-                <input type="checkbox" id="allow-nether" onclick=checkboxChanged(this)>
-                <span class="slider round"></span>
+            <label>
+                <select name="allow-nether" class="select" id="allow-nether" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
             </label>
+            <small>Enable or disable the nether dimension</small>
         </div>
         <div class="setting">
-            <h2>test</h2>
-            <button>test</button>
+            <h2>Simulation distance</h2>
+            <label>
+                <input class="input" type="number" name="simulation-distance" id="simulation-distance" onchange=fieldChanged(this) min="3" max="32">
+            </label>
+            <small>Maximum distance from players in which the server still updates entities</small>
         </div>
         <div class="setting">
-            <h2>test</h2>
-            <button>test</button>
+            <h2>Spawn protection</h2>
+            <label>
+                <input class="input" type="number" name="spawn-protection" id="spawn-protection" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>A square of chunks that blocks can't be broken in without op</small>
         </div>
-        
+    </div>
+
+    <hr class="settingSeparator">
+
+    <h1>World generation settings</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>Generate structures</h2>
+            <label>
+                <select name="generate-structures" class="select" id="generate-structures" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Generate structures like villages, mansions, ect.</small>
+        </div>
+        <div class="setting">
+            <h2>Level name</h2>
+            <label>
+                <input class="input" type="text" name="level-name" id="level-name" onchange=fieldChanged(this)>
+            </label>
+            <small>Name of the world and folder</small>
+        </div>
+        <div class="setting">
+            <h2>Level seed</h2>
+            <label>
+                <input class="input" type="text" name="level-seed" id="level-seed" onchange=fieldChanged(this)>
+            </label>
+            <small>The seed used for generating the world</small>
+        </div>
+        <div class="setting">
+            <h2>Level type</h2>
+            <label>
+                <input class="input" type="text" name="level-type" id="level-type" onchange=fieldChanged(this)>
+            </label>
+            <small>The type of the world. Escaping with : with \ is required when using a preset !</small>
+        </div>
+        <div class="setting">
+            <h2>Generator settings</h2>
+            <label>
+                <input class="input" type="text" name="generator-settings" id="generator-settings" onchange=fieldChanged(this)>
+            </label>
+            <small>Used to customize world generation</small>
+        </div>
+
+    </div>
+    <hr class="settingSeparator">
+    
+    <h1>Operators (OPs)</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>Broadcast console to OPs</h2>
+            <label>
+                <select name="broadcast-console-to-ops" class="select" id="broadcast-console-to-ops" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Broadcasts the output of the console to OPs who are on the server</small>
+        </div>
+        <div class="setting">
+            <h2>Broadcast RCON to OPs</h2>
+            <label>
+                <select name="broadcast-rcon-to-ops" class="select" id="broadcast-rcon-to-ops" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Broadcasts the RCON output to OPs who are on the server</small>
+        </div>
+        <div class="setting">
+            <h2>Function permission level</h2>
+            <label>
+                <input class="input" type="number" name="function-permission-level" id="function-permission-level" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>Default level for functions, see OP permission levels for details</small>
+        </div>
+        <div class="setting">
+            <h2>OP permission level</h2>
+            <label>
+                <input class="input" type="number" name="op-permission-level" id="op-permission-level" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>Sets the default permission level for ops when using /op. All levels inherit abilities and commands from levels before them.</small>
+            <br>
+            <div class="tooltip">?
+                <span class="tooltiptext">
+                    1 - Ops can bypass spawn protection.
+                    <br>
+                    <br>
+                    2 - Ops can use all singleplayer cheat commands (except for /publish and /debug) and use command blocks
+                    <br>
+                    <br>
+                    3 - Ops can use most multiplayer-exclusive commands and /debug, and commands to manage players (/kick, /ban, ect.)
+                    <br>
+                    <br>
+                    4 - Ops can use all command including 
+                    <br>/stop, /save-all, /save-on and /save-off
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr class="settingSeparator">
+    
+    <h1>Connection</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>MOTD</h2>
+            <label>
+                <input class="input" type="text" name="motd" id="motd" onchange=fieldChanged(this)>
+            </label>
+            <small>The MOTD seen in the multiplayer screen</small>
+        </div>
+        <div class="setting">
+            <h2>Server Ip</h2>
+            <label>
+                <input class="input" type="text" name="server-ip" id="server-ip" onchange=fieldChanged(this)>
+            </label>
+            <small>The IP address the server listens on. If empty, the server listens on all available IP addresses. It is recommended to leave this empty.</small>
+        </div>
+        <div class="setting">
+            <h2>Server Port</h2>
+            <label>
+                <input class="input" type="number" name="server-port" id="server-port" onchange=fieldChanged(this) min="0" max="65535">
+            </label>
+            <small>The port of the server</small>
+        </div>
+        <div class="setting">
+            <h2>Maximum players</h2>
+            <label>
+                <input class="input" type="number" name="max-players" id="max-players" onchange=fieldChanged(this) min="0" max="65535">
+            </label>
+            <small>Maximum amount of players that are allowed on the server excluding operators</small>
+        </div>
+        <div class="setting">
+            <h2>Online mode</h2>
+            <label>
+                <select name="online-mode" class="select" id="online-mode" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Checks if the player owns a legitimate copy of minecraft</small>
+        </div>
+        <div class="setting">
+            <h2>Enforce secure profile</h2>
+            <label>
+                <select name="enforce-secure-profile" class="select" id="enforce-secure-profile" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>If enabled players without a Mojang-signed public key will not be able to connect</small>
+        </div>
+        <div class="setting">
+            <h2>Enable status</h2>
+            <label>
+                <select name="enable-status" class="select" id="enable-status" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Makes the server appear as online on the server list. <br>If disabled, the server will appear as offline but players will still be able to connect</small>
+        </div>
+        <div class="setting">
+            <h2>Hide online players</h2>
+            <label>
+                <select name="hide-online-players" class="select" id="hide-online-players" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>When enabled, player list is not shown on status request</small>
+        </div>
+        <div class="setting">
+            <h2>Accept transfers</h2>
+            <label>
+                <select name="accepts-transfers" class="select" id="accepts-transfers" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Allows servers to accept incoming transfers via a transfer packet</small>
+            <br>
+            
+            <div class="tooltip">?
+                <span class="tooltiptext">
+                    Enabled - Incoming transfers are allowed, and the server must approve it
+                    <br>
+                    Disabled - Incoming transfers are rejected, and the player is disconnected
+                </span>
+            </div>
+        </div>
+        <div class="setting">
+            <h2>Prevent proxy connections</h2>
+            <label>
+                <select name="prevent-proxy-connections" class="select" id="prevent-proxy-connections" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>If the ISP/AS sent from the server is different from the one from Mojang Studios' authentication server, the player is kicked</small>
+            <br>
+            
+            <div class="tooltip">?
+                <span class="tooltiptext">
+                    Enabled - The server prevents users from using VPNs or proxies
+                    <br>
+                    Disabled - The server doesn't prevent users from using VPNs and proxies
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr class="settingSeparator">
+    
+    <h1>RCON, Query</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>Enable RCON</h2>
+            <label>
+                <select class="select" name="enable-rcon" id="enable-rcon" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enables remote control of the server</small>
+        </div>
+        <div class="setting">
+            <h2>RCON password</h2>
+            <label>
+                <input class="input" type="text" name="rcon.password" id="rcon.password" onchange=fieldChanged(this)>
+            </label>
+            <small>The password for RCON</small>
+        </div>
+        <div class="setting">
+            <h2>RCON Port</h2>
+            <label>
+                <input class="input" type="number" name="rcon.port" id="rcon.port" onchange=fieldChanged(this) min="0" max="65535">
+            </label>
+            <small>The port for RCON</small>
+        </div>
+        <div class="setting">
+            <h2>Enable query</h2>
+            <label>
+                <select class="select" name="enable-query" id="enable-query" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enables query. Server lists will use this, to get information about the server.</small>
+        </div>
+        <div class="setting">
+            <h2>Query Port</h2>
+            <label>
+                <input class="input" type="number" name="query.port" id="query.port" onchange=fieldChanged(this) min="0" max="65535">
+            </label>
+            <small>The port that query information is sent through. Unless you have a REALLY good reason, keep it the same as <a href="#server-port">server-port</a></small>
+        </div>
+    </div>
+    <hr class="settingSeparator">
+    
+    <h1>Resource pack</h1>
+    <div class="settings">
+        <div class="setting">
+            <h2>Require resource pack</h2>
+            <label>
+                <select class="select" name="require-resource-pack" id="require-resource-pack" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Forces players to use the server resource pack. If they decline they get kicked</small>
+        </div>
+        <div class="setting">
+            <h2>Resource pack URI</h2>
+            <label>
+                <label>
+                    <input class="input" type="text" name="resource-pack" id="resource-pack" onchange=fieldChanged(this)>
+                </label>
+            </label>
+            <small>Forces players to use the server resource pack. If they decline they get kicked</small>
+            <br>
+            
+            <div class="tooltip">?
+                <span class="tooltiptext">
+                    Note that (in some versions before 1.15.2), the ":" and "=" characters need to be escaped with a backslash (\), e.g. http\://somedomain.com/somepack.zip?someparam\=somevalue
+                    <br>
+                    <br>
+                    The resource pack may not have a larger file size than 250 MiB
+                    <br>
+                    (Between 1.17 and 1.15: 100 MiB,
+                    <br>
+                    Before 1.15: 50 MiB)
+                </span>
+            </div>
+        </div>
+        <div class="setting">
+            <h2>Resource pack URI</h2>
+            <label>
+                <input class="input" type="text" name="resource-pack-id" id="resource-pack-id" onchange=fieldChanged(this)>
+            </label>
+            <small>Optional UUID for the resource pack set by resource-pack to identify the pack with clients</small>
+        </div>
+        <div class="setting">
+            <h2>Resource pack prompt</h2>
+            <label>
+                <input class="input" type="text" name="resource-pack-prompt" id="resource-pack-prompt" onchange=fieldChanged(this)>
+            </label>
+            <small>Optional message thats displayed when require-resource-pack is used. Can contain multiple lines but not chat component syntax</small>
+        </div>
+        <div class="setting">
+            <h2>Resource pack name in SHA-1</h2>
+            <label>
+                <input class="input" type="text" name="resource-pack-sha1" id="resource-pack-sha1" onchange=fieldChanged(this)>
+            </label>
+            <small>Optional SHA-1 digest of the resource pack, in lowercase hexadecimal. Recommended to specify this as it's used to verify the integrify of the resource pack</small>
+        </div>
+    </div>
+    <hr class="settingSeparator">
+    
+    <h1>Advanced properties</h1>
+    <h2>Don't touch these unless you know what you are doing</h2>
+    <div class="settings">
+        <div class="setting">
+            <h2>Log IPs</h2>
+            <label>
+                <select class="select" name="log-ips" id="log-ips" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>If enabled, player IPs are gonna be included when they join the game</small>
+        </div>
+        <div class="setting">
+            <h2>Enable JMX monitoring</h2>
+            <label>
+                <select class="select" name="enable-jmx-monitoring" id="enable-jmx-monitoring" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Allow <a href="https://en.wikipedia.org/wiki/Java_Management_Extensions">Java Management Extensions</a> access to the server information.</small>
+        </div>
+        <div class="setting">
+            <h2>Use native transport</h2>
+            <label>
+                <select class="select" name="use-native-transport" id="use-native-transport" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Linux server performance improvements: optimized packet sending/receiving on Linux.</small>
+        </div>
+        <div class="setting">
+            <h2>Region file compression</h2>
+            <label>
+                <select class="select" name="region-file-compression" id="region-file-compression" onchange=selectionChanged(this)>
+                    <option value="deflate">Deflate</option>
+                    <option value="lz4">lz4</option>
+                    <option value="none">None</option>
+                </select>
+            </label>
+            <small>Uses different algorithm for the compression of chunks in region</small>
+        </div>
+        <div class="setting">
+            <h2>Sync chunk writes</h2>
+            <label>
+                <select class="select" name="sync-chunk-writes" id="sync-chunk-writes" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>Enables synchronous chunk writes</small>
+        </div>
+        <div class="setting">
+            <h2>Debug</h2>
+            <label>
+                <select class="select" name="debug" id="debug" onchange=selectionChanged(this)>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                </select>
+            </label>
+            <small>No one really knows what this does</small>
+        </div>
+        <div class="setting">
+            <h2>Rate limit</h2>
+            <label>
+                <input class="input" type="number" name="rate-limit" id="rate-limit" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>Maximum amount of packets a user can send before getting kicked. Setting this to 0 will disable this feature</small>
+        </div>
+        <div class="setting">
+            <h2>Maximum world size</h2>
+            <label>
+                <input class="input" type="number" name="max-world-size" id="max-world-size" onchange=fieldChanged(this) min="0">
+            </label>
+            <small>The maximum possible size in blocks, expressed as a radius that the world border can obtain</small>
+        </div>
+        <div class="setting">
+            <h2>Maximum tick time</h2>
+            <label>
+                <input class="input" type="number" name="max-tick-time" id="max-tick-time" onchange=fieldChanged(this)>
+            </label>
+            <small>The maximum number of milliseconds a signle tick may take before the server watchdog stops the server. Once criteria is met it calls System.exit(1). Setting to -1 disables watchdog entirely</small>
+        </div>
+        <div class="setting">
+            <h2>Max chained neighbor updates</h2>
+            <label>
+                <input class="input" type="number" name="max-chained-neighbor-updates" id="max-chained-neighbor-updates" onchange=fieldChanged(this)>
+            </label>
+            <small>Limits the amount of consecutive neighbor updates before skipping the rest. Negative values remove the limit</small>
+        </div>
+        <div class="setting">
+            <h2>Entity view distance</h2>
+            <label>
+                <input class="input" type="number" name="entity-broadcast-range-percentage" id="entity-broadcast-range-percentage" onchange=fieldChanged(this)>
+            </label>
+            <small>How close entities need to be to be sent to clients. Higher the value the further away they get rendered from but this can cause lag!</small>
+        </div>
+        <div class="setting">
+            <h2>Network compression threshold</h2>
+            <label>
+                <input class="input" type="number" name="network-compression-threshold" id="network-compression-threshold" onchange=fieldChanged(this)>
+            </label>
+            <small>By default it allows packets that are n-1 bytes big to go normally, but a packet of n bytes or more gets compressed down. So, a lower number means more compression but compressing small amounts of bytes might actually end up with a larger result than what went in.</small>
+            <br>
+            <div class="tooltip">?
+                <span class="tooltiptext">
+                    -1 - disable compression entirely
+                    <br>
+                    0 - compress everything
+                    <br>
+                    <br>
+                    Note: The Ethernet spec requires that packets less than 64 bytes become padded to 64 bytes. Thus, setting a value lower than 64 may not be beneficial. It is also not recommended to exceed the MTU, typically 1500 bytes.
+                </span>
+            </div>
+        </div>
+        <div class="setting">
+            <h2>Bug report link</h2>
+            <label>
+                <input class="input" type="text" name="bug-report-link" id="bug-report-link" onchange=fieldChanged(this)>
+            </label>
+            <small>Will be displayed on disconnection screen, if disconnection was caused by packet handling error, and included as a comment in disconnection report.<br><br>This field should contain well-formed URL.</small>
+        </div>
+        <div class="setting">
+            <h2>Text filtering</h2>
+            <label>
+                <input class="input" type="text" name="text-filtering-config" id="text-filtering-config" onchange=fieldChanged(this)>
+            </label>
+            <small>Allows you to specify an online server for filtering text. This filter would be applied for chat, text of written books, ect.</small>
+        </div>
+        <div class="setting">
+            <h2>Initially disabled packs</h2>
+            <label>
+                <input class="input" type="text" name="initial-disabled-packs" id="initial-disabled-packs" onchange=fieldChanged(this)>
+            </label>
+            <small>List of datapacks separated by commas that should not be auto-enabled on world creation</small>
+        </div>
+        <div class="setting">
+            <h2>Initally enabled packs</h2>
+            <label>
+                <input class="input" type="text" name="initial-enabled-packs" id="initial-enabled-packs" onchange=fieldChanged(this)>
+            </label>
+            <small>List of datapacks separated by commas that should be auto-enabled on world creation. Feature packs need to be explicitly enabled</small>
+        </div>
     </div>
 
     <script src="script.js"></script>
